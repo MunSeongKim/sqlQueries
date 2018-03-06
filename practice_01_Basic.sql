@@ -35,7 +35,7 @@ SELECT COUNT(*) as '부서 수'
 -- 6. 현재 부서 매니저는 몇 명이나 있나요?
 SELECT COUNT(*) as '매니저 수'
   FROM dept_manager
- WHERE to_date LIKE '9999%';
+ WHERE to_date > now();
 
 -- 7. 전체 부서를 출력하려고 합니다. 순서는 부서이름이 긴 순서대로 출력해 보세요.
 SELECT *
@@ -43,7 +43,7 @@ SELECT *
 ORDER BY LENGTH(dept_name) DESC;
 
 -- 8. 현재 급여가 120,000이상 받는 사원은 몇 명이나 있습니까?
-SELECT *
+SELECT COUNT(*)
   FROM salaries
  WHERE salary >= 120000 AND to_date LIKE '9999%';
  
