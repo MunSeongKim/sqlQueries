@@ -8,6 +8,7 @@ SELECT COUNT(*)
 
 -- 2. 현재, 각 부서별로 최고의 급여를 받는 사원의 사번, 이름, 부서, 연봉을 조회하세요.
 -- 단, 조회결과는 연봉의 내림차순으로 졍렬되어 나타나야 합니다.
+
 SELECT a.emp_no as '사번',
 	   concat(first_name, ' ', last_name) as '이름',
 	   d.dept_name as '부서',
@@ -51,7 +52,8 @@ SELECT a.emp_no as '사번',
    AND a.salary >= d.avg_salary
    AND b.dept_no = d.dept
    AND b.to_date = '9999-01-01'
-   AND a.to_date = '9999-01-01';
+   AND a.to_date = '9999-01-01'
+ORDER BY 3 ASC;
    
 -- 4. 현재, 사원들의 사번, 이름, 매니저 이름, 부서 이름으로 출력해보세요.
 SELECT a.emp_no as '사번',
@@ -75,7 +77,7 @@ SELECT a.emp_no as '사번',
 SELECT a.emp_no as '사번',
 	   concat(first_name, ' ', last_name) as '이름',
        c.title as '직책',
-       d.salary as'연봉',
+       d.salary as'연봉'
        -- b.dept_no
   FROM employees a, dept_emp b, titles c, salaries d,
        ( SELECT b.dept_no as dept_no, ROUND(AVG(salary)) as avg_salary
@@ -99,6 +101,9 @@ SELECT a.emp_no as '사번',
    AND a.emp_no = c.emp_no
    AND a.emp_no = d.emp_no
    AND b.dept_no = tmp.dept_no
+   AND d.to_date = '9999-01-01'
+   AND c.to_date = '9999-01-01'
+   AND b.to_date = '9999-01-01'
 ORDER BY 연봉 ASC;
 
 -- 6. 평균 연봉이 가장 높은 부서는?
@@ -161,6 +166,6 @@ SELECT manager.dept_name as '부서이름',
  WHERE a.emp_no = b.emp_no
    AND b.dept_no = manager.dept_no
    AND a.emp_no = c.emp_no
-   AND manager.salary <= c.salary
+   AND manager.salary < c.salary
    AND c.to_date = '9999-01-01'
    AND b.to_date = '9999-01-01';
