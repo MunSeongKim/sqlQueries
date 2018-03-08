@@ -127,7 +127,8 @@ FROM ( SELECT a.dept_name, ROUND(AVG(salary)) as avg_salary
 									GROUP BY a.dept_name ) a ) ) tmp;
                                     
 -- 7. 평균 연봉이 가장 높은 직책?
-SELECT tmp.title as '최고 평균 연봉 직책'
+SELECT tmp.title as '최고 평균 연봉 직책',
+       tmp.avg_salary
 FROM ( SELECT a.title, ROUND(AVG(salary)) as avg_salary
 		 FROM titles a, employees c, salaries d
 		WHERE a.emp_no = c.emp_no
