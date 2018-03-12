@@ -8,7 +8,6 @@ SELECT COUNT(*)
 
 -- 2. 현재, 각 부서별로 최고의 급여를 받는 사원의 사번, 이름, 부서, 연봉을 조회하세요.
 -- 단, 조회결과는 연봉의 내림차순으로 졍렬되어 나타나야 합니다.
-
 SELECT a.emp_no as '사번',
 	   concat(first_name, ' ', last_name) as '이름',
 	   d.dept_name as '부서',
@@ -16,18 +15,18 @@ SELECT a.emp_no as '사번',
   FROM salaries a,
        dept_emp b,
 	   employees c, 
-       ( SELECT a.dept_no as dept, MAX(salary) as max_salary, a.dept_name as dept_name
+       ( SELECT a.dept_no as dept_no, MAX(salary) as max_salary, a.dept_name as dept_name
 		   FROM departments a, dept_emp b, employees c, salaries d
 		  WHERE a.dept_no = b.dept_no
 			AND b.emp_no = c.emp_no
 			AND c.emp_no = d.emp_no
             AND b.to_date = '9999-01-01'
             AND d.to_date = '9999-01-01'
-	   GROUP BY a.dept_name ) d
+	   GROUP BY a.dept_no ) d
  WHERE a.emp_no = c.emp_no
    AND b.emp_no = c.emp_no
    AND a.salary = d.max_salary
-   AND b.dept_no = d.dept
+   AND b.dept_no = d.dept_no
    AND b.to_date = '9999-01-01'
    AND a.to_date = '9999-01-01'
 ORDER BY 연봉 DESC;
@@ -39,18 +38,18 @@ SELECT a.emp_no as '사번',
   FROM salaries a,
        dept_emp b,
 	   employees c, 
-       ( SELECT a.dept_no as dept, ROUND(AVG(salary)) as avg_salary, a.dept_name as dept_name
+       ( SELECT a.dept_no as dept_no, ROUND(AVG(salary)) as avg_salary, a.dept_name as dept_name
 		   FROM departments a, dept_emp b, employees c, salaries d
 		  WHERE a.dept_no = b.dept_no
 			AND b.emp_no = c.emp_no
 			AND c.emp_no = d.emp_no
             AND b.to_date = '9999-01-01'
             AND d.to_date = '9999-01-01'
-	   GROUP BY a.dept_name ) d
+	   GROUP BY a.dept_no ) d
  WHERE a.emp_no = c.emp_no
    AND b.emp_no = c.emp_no
    AND a.salary >= d.avg_salary
-   AND b.dept_no = d.dept
+   AND b.dept_no = d.dept_no
    AND b.to_date = '9999-01-01'
    AND a.to_date = '9999-01-01'
 ORDER BY 3 ASC;
@@ -89,14 +88,14 @@ SELECT a.emp_no as '사번',
             AND d.to_date = '9999-01-01'
 	   GROUP BY a.dept_name
          HAVING avg_salary = ( SELECT MAX(a.avg_salary)
-			  				     FROM ( SELECT a.dept_no as dept, ROUND(AVG(salary)) as avg_salary, a.dept_name as dept_name
+			  				     FROM ( SELECT a.dept_no as dept_no, ROUND(AVG(salary)) as avg_salary
 								 	      FROM departments a, dept_emp b, employees c, salaries d
 									     WHERE a.dept_no = b.dept_no
 										   AND b.emp_no = c.emp_no
 										   AND c.emp_no = d.emp_no
 										   AND b.to_date = '9999-01-01'
 										   AND d.to_date = '9999-01-01'
-								      GROUP BY a.dept_name ) a ) ) tmp
+								      GROUP BY a.dept_no ) a ) ) tmp
  WHERE a.emp_no = b.emp_no
    AND a.emp_no = c.emp_no
    AND a.emp_no = d.emp_no
@@ -170,3 +169,28 @@ SELECT manager.dept_name as '부서이름',
    AND manager.salary < c.salary
    AND c.to_date = '9999-01-01'
    AND b.to_date = '9999-01-01';
+   
+SELECT e.dept_name as '부서이름', 
+       concat(a.first_name, ' ', a.last_name) as '사원이름', 
+       c.salary as '연봉',
+       concat(d.first_name, ' ', d.last_name) as '매니저 이름',
+       g.salary as '매니저 연봉'
+  FROM employees a,
+       dept_emp b,
+       salaries c,
+       employees d,
+       departments e,
+       dept_manager f,
+       salaries g
+ WHERE a.emp_no = b.emp_no
+   AND b.dept_no = e.dept_no
+   AND a.emp_no = c.emp_no
+   AND g.salary < c.salary
+   AND c.to_date = '9999-01-01'
+   AND b.to_date = '9999-01-01'
+   AND d.emp_no = f.emp_no
+   AND f.dept_no = e.dept_no
+   AND d.emp_no = g.emp_no
+   AND g.to_date = '9999-01-01'
+   AND f.to_date = '9999-01-01';
+   
